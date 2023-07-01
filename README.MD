@@ -14,4 +14,4 @@ Meanwhile, I figured out there is no direct way to pull the data from the email 
 
 Thereafter, I linked the google spreadsheet as the data source for the data studio to create dashboards and setup the refreshment of data every 12 hours. This way the dashboard automatically updates when the data adds up into the google spreadsheet everyday. 
 
-
+![alt text](https://github.com/DhatriPola/GmailAttachmentsToGoogleSheets/blob/integration-setup/Sales%20Dashboard.png)
