@@ -1,45 +1,48 @@
 function onOpen() {
   var ui = SpreadsheetApp.getUi();
-  // Or DocumentApp or FormApp.
-  ui.createMenu('Gmail to sheets')
-      .addItem('Config', 'updateLabelSheetName')
-      .addItem('Fetch Data', 'saveXlsxDataToSheets')
-      .addToUi();
+    ui.createMenu('Gmail to sheets')
+    .addItem('Config','showSidebar')
+    .addItem('Fetch Data', 'fetchData')
+    .addToUi();
 }
 
-function updateLabelSheetName() {
- var ui = SpreadsheetApp.getUi(); // Same variations.
-  var documentProperties = PropertiesService.getDocumentProperties();
+function showSidebar() {
+  var ui = SpreadsheetApp.getUi();
+  var htmlOutput = HtmlService.createHtmlOutputFromFile('menu')
+    .setSandboxMode(HtmlService.SandboxMode.IFRAME)
+    .setTitle('Gmail to sheets')
+    .setWidth(300)
+    .setHeight(100);
+  ui.showSidebar(htmlOutput);
+}
 
-  openFirstPrompt(ui, documentProperties);
+function getGmailLabels() {
+  var labels = GmailApp.getUserLabels();
+  var labelNames = labels.map(function(label) {
+    var originalName = label.getName()
+    return originalName;
+  });
+  return labelNames;
   
 }
 
-function openFirstPrompt(ui, documentProperties){
-  var firstPrompt = ui.prompt(
-      'Let\'s get Label from you GMail to scan for XLS attachment:',
-      ui.ButtonSet.OK_CANCEL);
-
-  // Process the user's response.
-  var button = firstPrompt.getSelectedButton();
-  var text = firstPrompt.getResponseText();
-  if (button == ui.Button.OK) {
-    documentProperties.setProperty(ConfigVars.GMAIL_LABEL, text);
-    openSecondPrompt(ui, documentProperties);
-  } 
+function getSheetNames() {
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  var sheets = spreadsheet.getSheets();
+  var sheetNames = sheets.map(function(sheet) {
+    return sheet.getName();
+  });
+  return sheetNames;
 }
 
-function openSecondPrompt(ui, documentProperties){
-  var secondPrompt = ui.prompt(
-      'Let\'s get Sheet Name where the data needs to be saved to:',
-      
-      ui.ButtonSet.OK_CANCEL);
 
-  // Process the user's response.
-  var button = secondPrompt.getSelectedButton();
-  var text = secondPrompt.getResponseText();
-  if (button == ui.Button.OK) {
-    documentProperties.setProperty(ConfigVars.SHEET_NAME, text);
-  } 
+function setGmailLabel(labelName) {
+  var documentProperties = PropertiesService.getDocumentProperties();
+  documentProperties.setProperty(ConfigVars.GMAIL_LABEL, labelName);
+  
 }
 
+function setSalesDataSheet(sheetName) {
+  var documentProperties = PropertiesService.getDocumentProperties();
+  documentProperties.setProperty(ConfigVars.SHEET_NAME, sheetName);
+}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    
+  </head>
+  <body>
+    <h1>Select Gmail Label:</h1>
+    <select id="labelSelect">
+      <option value="">Select a label</option>
+    </select>
+
+    <h1>Select Data Sheet:</h1>
+    <select id="salesDataSheetSelect">
+      <option value="">Select a sheet</option>
+    </select>
+    <br><br>
+    <button onclick="saveSettings()">Save</button>
+
+    <script>
+      function loadLabels() {
+        google.script.run.withSuccessHandler(populateLabels).getGmailLabels();
+      }
+
+      function populateLabels(labels) {
+        var labelSelect = document.getElementById("labelSelect");
+        labelSelect.innerHTML = "";
+        for (var i = 0; i < labels.length; i++) {
+          var option = document.createElement("option");
+          option.value = labels[i];
+          option.text = labels[i];
+          labelSelect.appendChild(option);
+        }
+      }
+
+      function loadSheetNames() {
+        google.script.run.withSuccessHandler(populateSheetNames).getSheetNames();
+      }
+
+      function populateSheetNames(sheetNames) {
+        var salesDataSheetSelect = document.getElementById("salesDataSheetSelect");
+        salesDataSheetSelect.innerHTML = "";
+        for (var i = 0; i < sheetNames.length; i++) {
+          var option = document.createElement("option");
+          option.value = sheetNames[i];
+          option.text = sheetNames[i];
+          salesDataSheetSelect.appendChild(option);
+        }
+      }
+
+      function saveSettings() {
+        debugger;
+        var selectedLabel = document.getElementById("labelSelect").value;
+        var selectedSheet = document.getElementById("salesDataSheetSelect").value;
+        
+        google.script.run.setSalesDataSheet(selectedSheet);
+                google.script.run.setGmailLabel(selectedLabel);
+
+
+        google.script.run.saveXlsxDataToSheets();
+        google.script.host.close();
+      }
+
+      // Call loadLabels() and loadSheetNames() when the HTML file is loaded
+      window.onload = function() {
+        loadLabels();
+        loadSheetNames();
+      };
+    </script>
+  </body>
+</html>

@@ -1,10 +1,9 @@
 function saveXlsxDataToSheets() {
-
   var documentProperties = PropertiesService.getDocumentProperties();
-  const label = 'label:' + documentProperties.getProperty(ConfigVars.GMAIL_LABEL);
-  var threads = GmailApp.search(label);
-  Logger.log(threads)
+  const label = documentProperties.getProperty(ConfigVars.GMAIL_LABEL);
+  var threads = GmailApp.getUserLabelByName(label).getThreads();
   var salesDataSheetName = documentProperties.getProperty(ConfigVars.SHEET_NAME);
+
   for (var i = 0; i < threads.length; i++) {
     var messages = threads[i].getMessages();
 
@@ -54,3 +53,15 @@ function getExcelData(tempID) {
   var lastColumn = sourceSheet.getLastColumn();
   return sourceSheet.getRange(1,1,lastRow, lastColumn).getValues();
 }
+
+function fetchData() {
+  var documentProperties = PropertiesService.getDocumentProperties();
+  const labelName = documentProperties.getProperty(ConfigVars.GMAIL_LABEL);
+  const sheetName = documentProperties.getProperty(ConfigVars.SHEET_NAME);
+
+  var htmlOutput = HtmlService.createHtmlOutput(labelName + " - " + sheetName)
+    .setWidth(300)
+    .setHeight(100);
+  SpreadsheetApp.getUi().showSidebar(htmlOutput);
+  saveXlsxDataToSheets()
+  }
